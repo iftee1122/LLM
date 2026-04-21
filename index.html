@@ -1,328 +1,420 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Matchmaker | Premium</title>
+    <title>LLM Matchmaker | Luxury-Refined</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600&family=Space+Grotesk:wght@300;500;700;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 900: '#0f172a' }
+                    fontFamily: {
+                        display: ['"Space Grotesk"', 'sans-serif'],
+                        body: ['"Manrope"', 'sans-serif'],
                     },
-                    boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.04)',
-                        'hover-soft': '0 10px 30px -4px rgba(0, 0, 0, 0.08)'
+                    colors: {
+                        obsidian: '#050505',
+                        surface: '#111111',
+                        surfaceHover: '#1A1A1A',
+                        accent: '#D4FF00', /* Neon Chartreuse */
+                        muted: '#666666'
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                     }
                 }
             }
         }
     </script>
+
     <style>
-        /* Smooth section transitions */
-        section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
-        section.active { display: block; opacity: 1; animation: slideUp 0.5s ease-out forwards; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Atmosphere: Film Grain Noise Overlay */
+        .noise-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
         }
-        /* Hide standard radio circles, style the label instead */
-        input[type="radio"] { display: none; }
+
+        /* CSS-First Animations */
+        @keyframes revealUp {
+            0% { opacity: 0; transform: translateY(40px) skewY(2deg); }
+            100% { opacity: 1; transform: translateY(0) skewY(0); }
+        }
+        @keyframes fadeScale {
+            0% { opacity: 0; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 255, 0, 0.1); }
+            50% { box-shadow: 0 0 40px rgba(212, 255, 0, 0.3); }
+        }
+
+        .animate-reveal { animation: revealUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+        .animate-fade { animation: fadeScale 0.6s ease-out forwards; opacity: 0; }
+        
+        .delay-100 { animation-delay: 100ms; }
+        .delay-200 { animation-delay: 200ms; }
+        .delay-300 { animation-delay: 300ms; }
+        .delay-400 { animation-delay: 400ms; }
+        .delay-500 { animation-delay: 500ms; }
+
+        /* Custom Radio Inputs - Hidden visually but accessible */
+        input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Grid-breaking layout utilities */
+        .bleed-left { margin-left: calc(-50vw + 50%); }
+        
+        /* Smooth section transitions */
+        section { display: none; }
+        section.active { display: block; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 antialiased selection:bg-brand-500 selection:text-white">
+<body class="bg-obsidian text-gray-200 font-body antialiased overflow-x-hidden selection:bg-accent selection:text-obsidian">
 
-    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-slate-200 transition-all duration-300">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
-            <div class="font-extrabold text-xl tracking-tighter text-brand-900 flex items-center gap-2">
-                <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                LLM Matchmaker.
+    <div class="noise-bg"></div>
+
+    <div class="fixed top-[-20%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-gradient-radial from-accent/5 to-transparent blur-[120px] pointer-events-none z-0"></div>
+
+    <nav class="fixed top-0 w-full z-50 mix-blend-difference border-b border-white/5 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-6 h-24 flex justify-between items-center">
+            <div class="font-display font-bold text-2xl tracking-tighter text-white">
+                MATCH<span class="text-accent">.</span>
             </div>
-            <div class="flex gap-8 font-medium text-sm text-slate-500">
-                <button onclick="navigate('home')" id="nav-home" class="hover:text-brand-900 transition-colors text-brand-900">Home</button>
-                <button onclick="navigate('compare')" id="nav-compare" class="hover:text-brand-900 transition-colors">Compare</button>
-                <button onclick="navigate('quiz')" id="nav-quiz" class="bg-brand-900 text-white px-5 py-2 rounded-full hover:bg-slate-800 transition-all shadow-sm hover:shadow-md">Find Match</button>
+            <div class="flex gap-8 font-display font-medium text-xs tracking-widest uppercase text-muted">
+                <button onclick="navigate('home')" class="hover:text-accent transition-colors">Index</button>
+                <button onclick="navigate('quiz')" class="text-white hover:text-accent transition-colors">The Assessment</button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 py-16">
+    <main class="relative z-10 w-full pt-32 pb-24 min-h-screen">
         
-        <section id="home" class="active">
-            <div class="max-w-3xl mx-auto text-center mt-12 mb-24">
-                <div class="inline-block bg-brand-50 border border-brand-100 text-brand-500 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-6">
-                    Data-Driven AI Selection
+        <section id="home" class="active max-w-7xl mx-auto px-6">
+            <div class="min-h-[80vh] flex flex-col justify-center">
+                <div class="w-full md:w-3/4 lg:w-2/3">
+                    <p class="font-display text-accent text-sm tracking-[0.2em] uppercase mb-8 animate-reveal">Algorithm Alignment Protocol</p>
+                    <h1 class="font-display text-6xl md:text-8xl font-black tracking-tighter leading-[0.9] text-white animate-reveal delay-100 mb-8 uppercase">
+                        Beyond <br>
+                        <span class="text-surfaceHover" style="-webkit-text-stroke: 1px rgba(255,255,255,0.3);">Predictable</span><br>
+                        Parameters.
+                    </h1>
+                    
+                    <div class="ml-0 md:ml-24 border-l border-accent/30 pl-8 animate-reveal delay-200">
+                        <p class="text-lg md:text-xl text-muted font-light leading-relaxed max-w-lg mb-10">
+                            A highly calibrated, 15-point diagnostic matrix designed for enterprise architects, creative professionals, and developers. We strip away the marketing noise to find the exact computational intelligence your workflow demands.
+                        </p>
+                        
+                        <button onclick="navigate('quiz')" class="group relative inline-flex items-center justify-center bg-transparent border border-accent/50 text-accent font-display uppercase tracking-widest text-xs py-5 px-10 overflow-hidden transition-all duration-500 hover:border-accent hover:shadow-[0_0_30px_rgba(212,255,0,0.2)]">
+                            <span class="absolute inset-0 bg-accent translate-y-[100%] group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]"></span>
+                            <span class="relative z-10 group-hover:text-obsidian transition-colors duration-500 font-bold">Initiate Assessment</span>
+                        </button>
+                    </div>
                 </div>
-                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight mb-8">
-                    Stop guessing. <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-900 to-brand-500">Find your perfect AI stack.</span>
-                </h1>
-                <p class="text-lg text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
-                    Cut through the marketing noise. Compare top-tier Large Language Models side-by-side or take our advanced assessment to align AI capabilities with your specific workflow.
-                </p>
-                <button onclick="navigate('quiz')" class="bg-brand-900 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-                    Start the Assessment
-                </button>
             </div>
         </section>
 
-        <section id="compare">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl font-bold tracking-tight mb-4">The Heavyweights</h2>
-                <p class="text-slate-500">An objective breakdown of the current frontier models.</p>
+        <section id="quiz" class="max-w-4xl mx-auto px-6">
+            <div class="mb-20 animate-reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 uppercase">System Diagnostics</h2>
+                <div class="h-[1px] w-full bg-gradient-to-r from-accent to-transparent"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="models-grid">
-                </div>
-        </section>
 
-        <section id="quiz">
-            <div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-soft">
-                <div class="text-center mb-10">
-                    <h2 class="text-2xl font-bold tracking-tight mb-2">Workflow Analysis</h2>
-                    <p class="text-slate-500 text-sm">Select the options that best describe your requirements.</p>
-                </div>
-                
-                <form id="llm-form" class="space-y-10">
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-slate-800">1. What is your absolute primary use case?</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="usecase" value="code" required class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
-                                    Software Dev & Complex Coding
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="usecase" value="write" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
-                                    Copywriting & Content Creation
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="usecase" value="data" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
-                                    Analyzing massive datasets/PDFs
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="usecase" value="research" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
-                                    Market Research & Web Scraping
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+            <form id="assessment-form" class="space-y-24">
+                <div id="questions-container" class="space-y-32"></div>
 
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-slate-800">2. How do you integrate AI into your workspace?</h4>
-                        <div class="grid grid-cols-1 gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="integration" value="google" required class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700 flex justify-between items-center">
-                                    <span>Deeply tied to Google Docs, Sheets, & Drive</span>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="integration" value="standalone" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700 flex justify-between items-center">
-                                    <span>I use it as a standalone web app/chat interface</span>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-slate-800">3. What kind of inputs are you working with?</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="input" value="text" required class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
-                                    Just Text
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="input" value="multimodal" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
-                                    Text + Images
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="input" value="heavy" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
-                                    Audio + Video Files
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <h4 class="font-semibold text-slate-800">4. Budget constraints?</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="budget" value="free" required class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
-                                    Strictly Free/Open Source
-                                </div>
-                            </label>
-                            <label class="cursor-pointer group">
-                                <input type="radio" name="budget" value="paid" class="peer">
-                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
-                                    Willing to pay $20/mo
-                                </div>
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="button" onclick="calculateComplexResult()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-md hover:bg-slate-800 transition-colors">
-                        Run Analysis Engine
+                <div class="pt-12 border-t border-white/10 animate-reveal delay-500">
+                    <button type="button" onclick="calculateResult()" class="w-full group relative bg-white text-obsidian font-display uppercase tracking-widest text-sm py-6 overflow-hidden transition-all duration-500 hover:bg-accent">
+                        <span class="relative z-10 font-bold">Synthesize Results</span>
                     </button>
-                </form>
+                </div>
+            </form>
 
-                <div id="result-display" class="hidden mt-12 pt-10 border-t border-slate-200 text-center">
-                    <div class="text-xs font-bold tracking-widest text-brand-500 uppercase mb-4">Algorithm Top Match</div>
-                    <div id="winner-logo-container" class="w-16 h-16 mx-auto mb-4 bg-slate-50 rounded-2xl flex items-center justify-center shadow-sm border border-slate-100"></div>
-                    <h2 id="winner-name" class="text-3xl font-extrabold text-slate-900 mb-4">Model Name</h2>
-                    <p id="winner-desc" class="text-slate-600 leading-relaxed max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100"></p>
+            <div id="result-display" class="hidden mt-32 pt-20 border-t border-accent/30 text-left">
+                <p class="font-display text-accent text-sm tracking-[0.2em] uppercase mb-4">Optimal Architecture Found</p>
+                <h2 id="winner-name" class="font-display text-6xl md:text-7xl font-black tracking-tighter text-white mb-8 uppercase">Model</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <p id="winner-desc" class="text-xl text-gray-300 font-light leading-relaxed"></p>
+                    <div class="bg-surface p-8 border border-white/5">
+                        <h4 class="font-display text-sm tracking-widest text-white uppercase mb-4 border-b border-white/10 pb-4">Key Advantages</h4>
+                        <ul id="winner-pros" class="space-y-3 text-muted text-sm font-light"></ul>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
+    <footer class="border-t border-white/5 mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="font-display font-bold text-xl tracking-tighter text-white opacity-50">MATCH.</div>
+            <div class="font-display text-xs tracking-widest text-muted uppercase">
+                &copy; 2026 Yeasir Iftee. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // Data Structure with inline SVGs for premium aesthetic
-        const llmData = [
+        // High-Impact 15 Question Matrix
+        const quizData = [
             {
-                id: "chatgpt",
-                name: "ChatGPT (GPT-4o)",
-                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-slate-800"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2057 5.9847 5.9847 0 0 0 3.989-2.9 6.051 6.051 0 0 0-.7388-7.0732ZM13.2599 22.1906c-1.8546 0-3.5358-.9623-4.4754-2.5484l.1132-.0661 5.0934-2.9377a1.442 1.442 0 0 0 .7278-1.258V8.1528l1.7925 1.035v6.5298c0 3.585-2.915 6.473-6.2515 6.473Zm-8.4908-3.8116a4.269 4.269 0 0 1-2.2377-3.8164c0-1.8593.9622-3.5359 2.5437-4.4707l.1132.0661 5.0934 2.9424c.4528.2642.7278.75.7278 1.258v7.2276l-1.7925-1.035v-6.53a6.4764 6.4764 0 0 0-3.1235-5.6322l-.1132-.066v10.057ZM2.417 7.3917a4.2737 4.2737 0 0 1 2.2377-3.8211 4.2595 4.2595 0 0 1 4.4754 0l-.066.1133L4.4754 6.5516a1.4468 1.4468 0 0 0-.7278 1.258v7.2276L1.955 14.002v-6.6103Zm15.823-1.035-5.0934-2.9377a1.4468 1.4468 0 0 0-1.4556 0L4.464 6.3614l1.7925-1.035 6.5205 3.765a6.481 6.481 0 0 1 3.1235 5.6322v5.6795l1.7924-1.035v-6.6103c0-1.8547-.9622-3.5359-2.5438-4.4755Zm3.3396 6.6103a4.269 4.269 0 0 1-2.2377 3.8164 4.2595 4.2595 0 0 1-4.4754 0l.066-.1133 4.5886-2.8677c.4528-.2642.7278-.75.7278-1.258V5.3168l1.7924 1.035v6.6103Zm-8.4907 3.8211-1.7925-1.035v-6.6103c0-1.8593.9623-3.5406 2.5438-4.4755a4.2642 4.2642 0 0 1 4.4754 0l-.1132.0661-5.0934 2.9377a1.4468 1.4468 0 0 0-.7278 1.258v7.2276Z"/></svg>`,
-                pros: ["Fastest response times", "Best voice & vision UI", "Strong all-rounder"],
-                cons: ["Writing can feel 'AI-generic'", "Guardrails can be restrictive"]
+                id: 'primary_goal',
+                question: '01. Define your primary computational objective.',
+                options: [
+                    { value: 'code', label: 'Production-grade Software Engineering & Architecture', models: ['claude', 'deepseek'] },
+                    { value: 'write', label: 'Nuanced Editorial, Copywriting & Ideation', models: ['claude', 'chatgpt'] },
+                    { value: 'data', label: 'Massive Dataset Analysis & Information Extraction', models: ['gemini'] },
+                    { value: 'research', label: 'Real-time Web Scraping & Market Synthesis', models: ['genspark', 'chatgpt'] }
+                ]
             },
             {
-                id: "claude",
-                name: "Claude 3.5 Sonnet",
-                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-orange-600"><path d="M12.064 1.22c-5.918 0-10.74 4.823-10.74 10.74 0 5.918 4.822 10.74 10.74 10.74 5.917 0 10.74-4.822 10.74-10.74 0-5.917-4.823-10.74-10.74-10.74zm0 18.52c-4.29 0-7.78-3.49-7.78-7.78s3.49-7.78 7.78-7.78 7.78 3.49 7.78 7.78-3.49 7.78-7.78 7.78zm-2.02-12.03c-.66 0-1.2.54-1.2 1.2s.54 1.2 1.2 1.2 1.2-.54 1.2-1.2-.54-1.2-1.2-1.2zm4.04 0c-.66 0-1.2.54-1.2 1.2s.54 1.2 1.2 1.2 1.2-.54 1.2-1.2-.54-1.2-1.2-1.2zm-2.02 5.05c-1.87 0-3.46 1.15-4.14 2.78l1.32.48c.45-1.13 1.55-1.94 2.82-1.94s2.37.81 2.82 1.94l1.32-.48c-.68-1.63-2.27-2.78-4.14-2.78z"/></svg>`,
-                pros: ["Unmatched coding with Artifacts", "Most human-like writing tone", "Deep reasoning capability"],
-                cons: ["Stricter usage limits", "No native real-time web search"]
+                id: 'modality',
+                question: '02. Select the required input/output modalities.',
+                options: [
+                    { value: 'text', label: 'Strictly Text (Highest precision, lowest latency)', models: ['deepseek', 'claude'] },
+                    { value: 'vision', label: 'Text + Advanced Vision/Document OCR', models: ['chatgpt', 'claude', 'gemini'] },
+                    { value: 'multimodal', label: 'Omni-modal (Native Audio, Video, Screen sharing)', models: ['chatgpt', 'gemini'] }
+                ]
             },
             {
-                id: "gemini",
-                name: "Gemini 1.5 Pro",
-                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-blue-500"><path d="M11.996 22l-1.226-4.634a8.497 8.497 0 0 0-5.497-5.497L.64 10.643l4.633-1.226a8.495 8.495 0 0 0 5.497-5.497L11.996 2l1.226 4.634a8.495 8.495 0 0 0 5.497 5.497l4.64 1.226-4.634 1.226a8.496 8.496 0 0 0-5.497 5.497L11.996 22z"/></svg>`,
-                pros: ["Massive 2M token context window", "Native Google Workspace integration", "Handles heavy audio/video inputs"],
-                cons: ["Can over-refuse benign prompts", "Interface can feel cluttered"]
+                id: 'context',
+                question: '03. Specify your Context Window requirements.',
+                options: [
+                    { value: 'short', label: '< 32k tokens (Standard interactions, targeted tasks)', models: ['chatgpt', 'deepseek'] },
+                    { value: 'medium', label: '200k tokens (Codebases, standard books, large reports)', models: ['claude'] },
+                    { value: 'massive', label: '1M - 2M tokens (Entire repositories, hour-long videos)', models: ['gemini'] }
+                ]
             },
             {
-                id: "genspark",
-                name: "Genspark / Perplexity",
-                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-teal-600"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
-                pros: ["Best for Market Research", "Real-time web scraping", "Synthesizes multiple sources"],
-                cons: ["Not designed for heavy coding", "Weaker creative writing"]
+                id: 'budget',
+                question: '04. Establish the operational budget limit.',
+                options: [
+                    { value: 'free', label: 'Strictly Free / Open-source weights', models: ['deepseek'] },
+                    { value: 'standard', label: 'Standard Subscription (~$20/mo)', models: ['chatgpt', 'claude', 'gemini', 'genspark'] },
+                    { value: 'enterprise', label: 'Enterprise API Scale (Pay per token)', models: ['claude', 'chatgpt', 'gemini'] }
+                ]
             },
             {
-                id: "deepseek",
-                name: "DeepSeek Coder V2",
-                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-indigo-600"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>`,
-                pros: ["Top-tier coding for free", "Open-weights available", "Incredible logical reasoning"],
-                cons: ["Less nuanced conversational tone", "Requires technical setup for local"]
+                id: 'deployment',
+                question: '05. Deployment environment preference.',
+                options: [
+                    { value: 'cloud', label: 'Cloud-hosted Web Interface (Zero setup)', models: ['chatgpt', 'claude', 'gemini'] },
+                    { value: 'local', label: 'Local / On-premise capable (Privacy paramount)', models: ['deepseek'] }
+                ]
+            },
+            {
+                id: 'reasoning',
+                question: '06. Required reasoning depth.',
+                options: [
+                    { value: 'system1', label: 'System 1: Fast, instinctive, standard generation', models: ['chatgpt', 'claude'] },
+                    { value: 'system2', label: 'System 2: Chain-of-thought, mathematical proofs', models: ['chatgpt', 'deepseek'] } /* Assuming o1/o3 tech for ChatGPT */
+                ]
+            },
+            {
+                id: 'integration',
+                question: '07. Ecosystem integration dependencies.',
+                options: [
+                    { value: 'google', label: 'Deep Google Workspace/GCP alignment', models: ['gemini'] },
+                    { value: 'microsoft', label: 'Microsoft / GitHub Copilot ecosystem', models: ['chatgpt'] },
+                    { value: 'agnostic', label: 'Ecosystem agnostic / Standalone', models: ['claude', 'deepseek', 'genspark'] }
+                ]
+            },
+            {
+                id: 'tone',
+                question: '08. Preferred stylistic output tone.',
+                options: [
+                    { value: 'human', label: 'Highly natural, organic, virtually undetectable', models: ['claude'] },
+                    { value: 'structured', label: 'Structured, formal, "AI-standard" clarity', models: ['chatgpt', 'gemini'] },
+                    { value: 'raw', label: 'Raw, unpolished logic (Developer-centric)', models: ['deepseek'] }
+                ]
+            },
+            {
+                id: 'latency',
+                question: '09. Latency tolerance.',
+                options: [
+                    { value: 'instant', label: 'Real-time voice / instantaneous feedback', models: ['chatgpt'] },
+                    { value: 'standard', label: 'Standard streaming generation (1-3 seconds)', models: ['claude', 'gemini', 'deepseek'] },
+                    { value: 'batch', label: 'Asynchronous deep research (Wait 10+ seconds)', models: ['genspark'] }
+                ]
+            },
+            {
+                id: 'ui_ux',
+                question: '10. Crucial UI/UX features.',
+                options: [
+                    { value: 'artifacts', label: 'Live code preview & interactive canvas (Artifacts)', models: ['claude'] },
+                    { value: 'voice', label: 'Advanced interruption-capable Voice Mode', models: ['chatgpt'] },
+                    { value: 'minimal', label: 'Minimalist chat, no extra UI bloat', models: ['deepseek'] }
+                ]
+            },
+            {
+                id: 'privacy',
+                question: '11. Data privacy constraints.',
+                options: [
+                    { value: 'standard', label: 'Standard cloud terms (Opt-out training available)', models: ['chatgpt', 'claude', 'gemini'] },
+                    { value: 'strict', label: 'Zero-retention or Local execution required', models: ['deepseek'] }
+                ]
+            },
+            {
+                id: 'search',
+                question: '12. Real-time knowledge requirements.',
+                options: [
+                    { value: 'crucial', label: 'Synthesizing live news, stock data, or deep web search', models: ['genspark', 'chatgpt'] },
+                    { value: 'none', label: 'Internal knowledge base is sufficient', models: ['claude', 'deepseek'] }
+                ]
+            },
+            {
+                id: 'language',
+                question: '13. Multilingual capabilities.',
+                options: [
+                    { value: 'english', label: 'English primary', models: ['claude'] },
+                    { value: 'global', label: 'Exceptional cross-lingual translations', models: ['chatgpt', 'deepseek', 'gemini'] }
+                ]
+            },
+            {
+                id: 'prompting',
+                question: '14. System prompt adherence.',
+                options: [
+                    { value: 'strict', label: 'Absolute obedience to complex constraints', models: ['claude'] },
+                    { value: 'creative', label: 'Willingness to bypass strict rules for creativity', models: ['chatgpt'] }
+                ]
+            },
+            {
+                id: 'refusal',
+                question: '15. Guardrail friction tolerance.',
+                options: [
+                    { value: 'low', label: 'Needs to avoid moralizing or refusing benign technical prompts', models: ['deepseek', 'chatgpt'] },
+                    { value: 'high', label: 'Strict enterprise safety guardrails are preferred', models: ['claude', 'gemini'] }
+                ]
             }
         ];
 
-        // Populate Grid
-        const grid = document.getElementById('models-grid');
-        llmData.forEach(model => {
-            const pros = model.pros.map(p => `<li class="relative pl-5 text-sm text-slate-600 before:content-['✓'] before:absolute before:left-0 before:text-emerald-500 font-medium mb-1">${p}</li>`).join('');
-            const cons = model.cons.map(c => `<li class="relative pl-5 text-sm text-slate-600 before:content-['✕'] before:absolute before:left-0 before:text-red-400 font-medium mb-1">${c}</li>`).join('');
+        const modelDatabase = {
+            chatgpt: {
+                name: "ChatGPT (GPT-4o)",
+                desc: "The pinnacle of omni-modal capability. Highly structured, lightning fast, and equipped with industry-leading native voice and vision modules.",
+                pros: ["Instantaneous Voice/Vision", "Deep MS Ecosystem integration", "Highly capable system 2 reasoning"]
+            },
+            claude: {
+                name: "Claude 3.5 Sonnet",
+                desc: "The undisputed leader in code generation and organic nuance. Paired with its Artifacts UI, it is the ultimate tool for developers and creative professionals.",
+                pros: ["Unmatched coding accuracy", "Most human-like editorial tone", "Flawless instruction adherence"]
+            },
+            gemini: {
+                name: "Gemini 1.5 Pro",
+                desc: "An architectural marvel of context handling. Capable of ingesting up to 2 Million tokens, making it the only choice for massive repository or video analysis.",
+                pros: ["2M Token Context Window", "Native Google Workspace sync", "Advanced multimodal ingestion"]
+            },
+            genspark: {
+                name: "Genspark / Perplexity",
+                desc: "The definitive research engine. Built to scour the live web, synthesize multiple sources, and deliver cited, hallucination-free reports.",
+                pros: ["Deep web scraping", "Citations & transparency", "Real-time market data"]
+            },
+            deepseek: {
+                name: "DeepSeek Coder V2",
+                desc: "Raw, unbridled computational logic. An open-weight titan that delivers frontier-level mathematical and coding performance at zero cost.",
+                pros: ["Open-source / Local capable", "Zero-cost frontier performance", "Highly resistant to over-refusal"]
+            }
+        };
+
+        // Render Questions dynamically
+        const container = document.getElementById('questions-container');
+        quizData.forEach((q, index) => {
+            const delay = (index % 5) * 100; // Staggered animations
             
-            grid.innerHTML += `
-                <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-soft hover:shadow-hover-soft hover:-translate-y-1 transition-all duration-300">
-                    <div class="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100">
-                        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">${model.logo}</div>
-                        <h3 class="text-xl font-bold text-slate-800">${model.name}</h3>
+            let optionsHTML = q.options.map((opt, optIndex) => `
+                <label class="group relative cursor-pointer block w-full">
+                    <input type="radio" name="${q.id}" value="${opt.value}" class="peer" required>
+                    <div class="p-6 md:p-8 bg-surface border border-white/5 transition-all duration-300 
+                                peer-checked:bg-white peer-checked:border-white peer-checked:text-obsidian
+                                hover:border-white/20 hover:bg-surfaceHover">
+                        <div class="flex items-center justify-between">
+                            <span class="font-display font-medium text-sm md:text-base uppercase tracking-wide group-hover:text-accent peer-checked:group-hover:text-obsidian transition-colors">${opt.label}</span>
+                            <div class="w-3 h-3 border border-current rounded-full peer-checked:bg-obsidian peer-checked:border-obsidian transition-all"></div>
+                        </div>
                     </div>
-                    <div class="mb-5">
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Strengths</div>
-                        <ul class="space-y-1">${pros}</ul>
-                    </div>
-                    <div>
-                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Weaknesses</div>
-                        <ul class="space-y-1">${cons}</ul>
+                </label>
+            `).join('');
+
+            container.innerHTML += `
+                <div class="animate-reveal" style="animation-delay: ${delay}ms;">
+                    <h3 class="font-body text-xl md:text-2xl text-white mb-8 font-light">${q.question}</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${optionsHTML}
                     </div>
                 </div>
             `;
         });
 
-        // Navigation
+        // Navigation Engine
         function navigate(sectionId) {
             document.querySelectorAll('main section').forEach(sec => sec.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('text-brand-900', 'font-bold'));
-            
             document.getElementById(sectionId).classList.add('active');
-            if(sectionId !== 'quiz') {
-                document.getElementById(`nav-${sectionId}`).classList.add('text-brand-900', 'font-bold');
-            }
+            window.scrollTo(0,0);
         }
 
-        // Advanced Scoring Algorithm
-        function calculateComplexResult() {
-            const form = document.getElementById('llm-form');
-            const data = new FormData(form);
+        // Scoring Engine
+        function calculateResult() {
+            const form = document.getElementById('assessment-form');
+            const formData = new FormData(form);
             
-            // Check completion
-            if([...data.keys()].length < 4) {
-                alert("Please complete all 4 questions to run the analysis engine.");
+            if([...formData.keys()].length < quizData.length) {
+                alert("The algorithm requires all 15 parameters to be defined.");
                 return;
             }
 
-            // Initialize Scoreboard
             let scores = { chatgpt: 0, claude: 0, gemini: 0, genspark: 0, deepseek: 0 };
 
-            // Apply Weights based on answers
-            const usecase = data.get('usecase');
-            if (usecase === 'code') { scores.claude += 3; scores.deepseek += 3; }
-            if (usecase === 'write') { scores.claude += 3; scores.chatgpt += 2; }
-            if (usecase === 'data') { scores.gemini += 4; }
-            if (usecase === 'research') { scores.genspark += 4; scores.chatgpt += 1; }
+            // Tabulate scores based on matrix logic
+            quizData.forEach(q => {
+                const selectedValue = formData.get(q.id);
+                const selectedOption = q.options.find(opt => opt.value === selectedValue);
+                if(selectedOption) {
+                    selectedOption.models.forEach(model => {
+                        scores[model] += 1;
+                        // Give weight to explicit high-impact answers
+                        if(q.id === 'budget' && selectedValue === 'free' && model === 'deepseek') scores.deepseek += 5;
+                        if(q.id === 'context' && selectedValue === 'massive' && model === 'gemini') scores.gemini += 5;
+                        if(q.id === 'ui_ux' && selectedValue === 'artifacts' && model === 'claude') scores.claude += 5;
+                        if(q.id === 'search' && selectedValue === 'crucial' && model === 'genspark') scores.genspark += 5;
+                    });
+                }
+            });
 
-            const integration = data.get('integration');
-            if (integration === 'google') { scores.gemini += 3; }
+            // Determine optimal architecture
+            const winnerId = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            const winner = modelDatabase[winnerId];
 
-            const input = data.get('input');
-            if (input === 'heavy') { scores.gemini += 3; scores.chatgpt += 2; }
-            if (input === 'multimodal') { scores.chatgpt += 2; scores.claude += 1; }
-
-            const budget = data.get('budget');
-            if (budget === 'free') { 
-                scores.deepseek += 5; // massive weight for free coding
-                scores.claude -= 2;   // penalize strict rate limits on free
-            }
-
-            // Determine Winner
-            let winnerId = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
-            let winner = llmData.find(m => m.id === winnerId);
-
-            // Generate contextual description
-            let desc = "";
-            if(winnerId === 'claude') desc = "Based on your focus on pristine code generation or nuanced writing, Claude 3.5 Sonnet's reasoning engine and Artifacts UI are unparalleled right now.";
-            if(winnerId === 'gemini') desc = "Because you work deeply within the Google ecosystem or need to process massive datasets and media files, Gemini 1.5 Pro's 2M token window is your best asset.";
-            if(winnerId === 'chatgpt') desc = "You need a robust, multimodal all-rounder. GPT-4o provides the fastest speeds and the most versatile vision/audio capabilities on the market.";
-            if(winnerId === 'genspark') desc = "Since you prioritize market research and data synthesis, specialized research engines like Genspark or Perplexity will scrape the web and compile reports much faster than standard chat models.";
-            if(winnerId === 'deepseek') desc = "You need top-tier logical reasoning and coding power but are conscious of budget constraints. DeepSeek offers enterprise-grade performance completely free.";
-
-            // Display Results
+            // Render Output
             document.getElementById('winner-name').innerText = winner.name;
-            document.getElementById('winner-desc').innerText = desc;
-            document.getElementById('winner-logo-container').innerHTML = winner.logo;
+            document.getElementById('winner-desc').innerText = winner.desc;
             
+            const prosContainer = document.getElementById('winner-pros');
+            prosContainer.innerHTML = winner.pros.map(pro => `
+                <li class="flex items-center gap-3">
+                    <span class="text-accent">■</span> ${pro}
+                </li>
+            `).join('');
+
             const resultDiv = document.getElementById('result-display');
             resultDiv.classList.remove('hidden');
-            resultDiv.classList.add('block', 'animate-[slideUp_0.5s_ease-out_forwards]');
-            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            resultDiv.classList.add('animate-reveal');
+            
+            // Smooth scroll to results
+            setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         }
     </script>
 </body>
