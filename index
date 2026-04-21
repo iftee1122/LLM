@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Matchmaker | Compare & Choose</title>
+    <style>
+        /* CSS variables for a clean, minimal, monochromatic aesthetic */
+        :root {
+            --bg-color: #f9fafb;
+            --surface-color: #ffffff;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --accent-color: #000000;
+            --border-color: #e5e7eb;
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links button {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-left: 2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-links button:hover, .nav-links button.active {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* Layout */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 5%;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero / Landing */
+        .hero {
+            text-align: center;
+            max-width: 800px;
+            margin: 4rem auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            background-color: var(--accent-color);
+            color: #ffffff;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        /* Comparison Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 2rem;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .pro-con-list {
+            list-style: none;
+        }
+
+        .pro-con-list li {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .pro-con-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .pro::before { color: #10b981; } /* Subtle Green */
+        .con::before { color: #ef4444; } /* Subtle Red */
+
+        /* Quiz Form */
+        .quiz-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--surface-color);
+            padding: 3rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--border-color);
+        }
+
+        .question {
+            margin-bottom: 2.5rem;
+        }
+
+        .question h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .options label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .options label:hover {
+            background-color: var(--bg-color);
+        }
+
+        .options input[type="radio"] {
+            margin-right: 1rem;
+            accent-color: var(--accent-color);
+        }
+
+        /* Result Section */
+        #result-display {
+            display: none;
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--text-primary);
+            color: white;
+            border-radius: var(--radius);
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        #result-display h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        #result-display p {
+            color: #d1d5db;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">LLM Matchmaker.</div>
+        <div class="nav-links">
+            <button onclick="navigate('home')" class="active" id="nav-home">Home</button>
+            <button onclick="navigate('compare')" id="nav-compare">Compare Models</button>
+            <button onclick="navigate('quiz')" id="nav-quiz">Find My Match</button>
+        </div>
+    </nav>
+
+    <main>
+        <section id="home" class="active">
+            <div class="hero">
+                <h1>Navigate the AI Landscape.</h1>
+                <p>Cut through the noise. Compare top-tier Large Language Models side-by-side, or take our quick assessment to find the perfect AI tailored to your specific workflow.</p>
+                <button class="btn" onclick="navigate('quiz')">Find My Model</button>
+            </div>
+        </section>
+
+        <section id="compare">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2>The Heavyweights</h2>
+                <p style="color: var(--text-secondary);">A strictly objective breakdown of current top models.</p>
+            </div>
+            <div class="grid" id="models-grid">
+                </div>
+        </section>
+
+        <section id="quiz">
+            <div class="quiz-container">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h2>Assessment</h2>
+                    <p style="color: var(--text-secondary);">Answer 3 quick questions to get your personalized recommendation.</p>
+                </div>
+                <form id="llm-form">
+                    <div class="question">
+                        <h4>1. What is your primary use case?</h4>
+                        <div class="options">
+                            <label><input type="radio" name="usecase" value="coding" required> Software Development & Coding</label>
+                            <label><input type="radio" name="usecase" value="writing"> Creative Writing & Copywriting</label>
+                            <label><input type="radio" name="usecase" value="data"> Analyzing massive documents/data</label>
+                            <label><input type="radio" name="usecase" value="general"> A bit of everything (General Assistant)</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>2. What is your budget preference?</h4>
+                        <div class="options">
+                            <label><input type="radio" name="budget" value="free" required> Must be free or highly cost-efficient</label>
+                            <label><input type="radio" name="budget" value="paid"> Willing to pay (~$20/mo) for the best</label>
+                        </div>
+                    </div>
+
+                    <div class="question">
+                        <h4>3. How important is coding capability vs natural language tone?</h4>
+                        <div class="options">
+                            <label><input type="radio" name="style" value="logic" required> I need pure logic and code structure</label>
+                            <label><input type="radio" name="style" value="human"> I need a natural, human-sounding tone</label>
+                            <label><input type="radio" name="style" value="balanced"> I need a balance of both</label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn" style="width: 100%;" onclick="calculateResult()">Reveal My Match</button>
+                </form>
+
+                <div id="result-display">
+                    <h3 style="color: #9ca3af; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Your Ideal Model</h3>
+                    <h2 id="winner-name">Model Name</h2>
+                    <p id="winner-desc">Description goes here based on their answers.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Data for the Comparison Grid
+        const llmData = [
+            {
+                name: "ChatGPT (GPT-4o)",
+                pros: ["Exceptional all-rounder", "Fastest response times", "Best native voice & vision capabilities"],
+                cons: ["Writing can sometimes feel 'AI-generic'", "Strict censorship guardrails"]
+            },
+            {
+                name: "Claude 3.5 Sonnet",
+                pros: ["Unmatched at coding tasks", "Most natural, human-like writing tone", "Artifacts UI is game-changing for web dev"],
+                cons: ["Stricter message limits on paid tier", "No native real-time web search"]
+            },
+            {
+                name: "Gemini 1.5 Pro",
+                pros: ["Massive 1M-2M token context window", "Deep integration with Google Docs/Drive", "Excellent video and audio analysis"],
+                cons: ["Can be overly cautious with benign prompts", "Reasoning can occasionally be inconsistent"]
+            },
+            {
+                name: "DeepSeek (V2/Coder)",
+                pros: ["Incredible reasoning for the cost", "Open-weights available for local use", "Top-tier math and coding performance"],
+                cons: ["Smaller broader ecosystem", "Less nuanced conversational tone compared to Claude"]
+            },
+            {
+                name: "Qwen 2.5",
+                pros: ["Exceptional multilingual capabilities", "Very strong open-source variants", "Highly competitive benchmark performance"],
+                cons: ["Less brand recognition in the West", "Community support is still growing"]
+            }
+        ];
+
+        // Populate Comparison Grid
+        const grid = document.getElementById('models-grid');
+        llmData.forEach(model => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            
+            let prosHtml = model.pros.map(pro => `<li class="pro">${pro}</li>`).join('');
+            let consHtml = model.cons.map(con => `<li class="con">${con}</li>`).join('');
+
+            card.innerHTML = `
+                <h3>${model.name}</h3>
+                <div style="margin-bottom: 1.5rem;">
+                    <strong style="font-size: 0.9rem; color: var(--text-primary);">Pros</strong>
+                    <ul class="pro-con-list">${prosHtml}</ul>
+                </div>
+                <div>
+                    <strong style="font-size: 0.9rem; color: var(--text-primary);">Cons</strong>
+                    <ul class="pro-con-list">${consHtml}</ul>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Navigation Logic (SPA Behavior)
+        function navigate(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('main section').forEach(sec => sec.classList.remove('active'));
+            // Remove active state from nav buttons
+            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            document.getElementById(`nav-${sectionId}`).classList.add('active');
+            
+            // Reset quiz if navigating away
+            if(sectionId !== 'quiz') {
+                document.getElementById('result-display').style.display = 'none';
+                document.getElementById('llm-form').reset();
+            }
+        }
+
+        // Quiz Logic Engine
+        function calculateResult() {
+            const form = document.getElementById('llm-form');
+            const usecase = form.elements['usecase'].value;
+            const budget = form.elements['budget'].value;
+            const style = form.elements['style'].value;
+
+            if (!usecase || !budget || !style) {
+                alert("Please answer all 3 questions to get an accurate match.");
+                return;
+            }
+
+            let winner = "";
+            let desc = "";
+
+            // Decision Tree Logic
+            if (usecase === 'data') {
+                winner = "Gemini 1.5 Pro";
+                desc = "Because you need to analyze massive amounts of data or documents, Gemini's massive 1M-2M token context window is unmatched in the industry.";
+            } 
+            else if (usecase === 'coding') {
+                if (budget === 'free') {
+                    winner = "DeepSeek Coder / Qwen";
+                    desc = "You want top-tier coding ability without the monthly fee. DeepSeek and Qwen offer incredible logic and coding capabilities completely free or open-source.";
+                } else {
+                    winner = "Claude 3.5 Sonnet";
+                    desc = "Claude 3.5 Sonnet is widely considered the undisputed king of coding right now. Paired with its 'Artifacts' UI, it will supercharge your development workflow.";
+                }
+            }
+            else if (usecase === 'writing' || style === 'human') {
+                if (budget === 'paid') {
+                    winner = "Claude 3.5 Sonnet";
+                    desc = "Claude is famous for having the most natural, least 'robotic' writing tone among all LLMs. It feels highly human and nuanced.";
+                } else {
+                    winner = "ChatGPT (Free Tier)";
+                    desc = "The free tier of ChatGPT offers a highly capable writer. While occasionally generic, proper prompting will yield excellent creative results.";
+                }
+            }
+            else {
+                // General fallback
+                winner = "ChatGPT (GPT-4o)";
+                desc = "You need a powerful all-rounder. GPT-4o is fast, highly capable across reasoning, writing, and coding, and features the best voice and vision tools.";
+            }
+
+            // Display Results
+            document.getElementById('winner-name').innerText = winner;
+            document.getElementById('winner-desc').innerText = desc;
+            document.getElementById('result-display').style.display = 'block';
+            
+            // Scroll to result smoothly
+            document.getElementById('result-display').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
