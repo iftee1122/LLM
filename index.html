@@ -3,439 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LLM Matchmaker | Compare & Choose</title>
+    <title>LLM Matchmaker | Premium</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 900: '#0f172a' }
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.04)',
+                        'hover-soft': '0 10px 30px -4px rgba(0, 0, 0, 0.08)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* CSS variables for a clean, minimal, monochromatic aesthetic */
-        :root {
-            --bg-color: #f9fafb;
-            --surface-color: #ffffff;
-            --text-primary: #111827;
-            --text-secondary: #4b5563;
-            --accent-color: #000000;
-            --border-color: #e5e7eb;
-            --radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-primary);
-            line-height: 1.6;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Navigation */
-        nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.5rem 5%;
-            background-color: var(--surface-color);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo {
-            font-weight: 700;
-            font-size: 1.25rem;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-links button {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            margin-left: 2rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-links button:hover, .nav-links button.active {
-            color: var(--text-primary);
-            font-weight: 500;
-        }
-
-        /* Layout */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 4rem 5%;
-        }
-
-        section {
-            display: none;
-            animation: fadeIn 0.5s ease;
-        }
-
-        section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        /* Smooth section transitions */
+        section { display: none; opacity: 0; transition: opacity 0.4s ease-in-out; }
+        section.active { display: block; opacity: 1; animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Hero / Landing */
-        .hero {
-            text-align: center;
-            max-width: 800px;
-            margin: 4rem auto;
-        }
-
-        h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 2.5rem;
-        }
-
-        .btn {
-            background-color: var(--accent-color);
-            color: #ffffff;
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn:hover {
-            opacity: 0.8;
-        }
-
-        /* Comparison Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .card {
-            background: var(--surface-color);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            padding: 2rem;
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            transform: translateY(-2px);
-        }
-
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .pro-con-list {
-            list-style: none;
-        }
-
-        .pro-con-list li {
-            position: relative;
-            padding-left: 1.5rem;
-            margin-bottom: 0.8rem;
-            font-size: 0.95rem;
-            color: var(--text-secondary);
-        }
-
-        .pro-con-list li::before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            font-weight: bold;
-        }
-
-        .pro::before { color: #10b981; } /* Subtle Green */
-        .con::before { color: #ef4444; } /* Subtle Red */
-
-        /* Quiz Form */
-        .quiz-container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--surface-color);
-            padding: 3rem;
-            border-radius: var(--radius);
-            border: 1px solid var(--border-color);
-        }
-
-        .question {
-            margin-bottom: 2.5rem;
-        }
-
-        .question h4 {
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .options label {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .options label:hover {
-            background-color: var(--bg-color);
-        }
-
-        .options input[type="radio"] {
-            margin-right: 1rem;
-            accent-color: var(--accent-color);
-        }
-
-        /* Result Section */
-        #result-display {
-            display: none;
-            margin-top: 3rem;
-            padding: 2rem;
-            background: var(--text-primary);
-            color: white;
-            border-radius: var(--radius);
-            text-align: center;
-            animation: fadeIn 0.5s ease;
-        }
-
-        #result-display h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        #result-display p {
-            color: #d1d5db;
-        }
+        /* Hide standard radio circles, style the label instead */
+        input[type="radio"] { display: none; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-900 antialiased selection:bg-brand-500 selection:text-white">
 
-    <nav>
-        <div class="logo">LLM Matchmaker.</div>
-        <div class="nav-links">
-            <button onclick="navigate('home')" class="active" id="nav-home">Home</button>
-            <button onclick="navigate('compare')" id="nav-compare">Compare Models</button>
-            <button onclick="navigate('quiz')" id="nav-quiz">Find My Match</button>
+    <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-slate-200 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+            <div class="font-extrabold text-xl tracking-tighter text-brand-900 flex items-center gap-2">
+                <svg class="w-6 h-6 text-brand-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                LLM Matchmaker.
+            </div>
+            <div class="flex gap-8 font-medium text-sm text-slate-500">
+                <button onclick="navigate('home')" id="nav-home" class="hover:text-brand-900 transition-colors text-brand-900">Home</button>
+                <button onclick="navigate('compare')" id="nav-compare" class="hover:text-brand-900 transition-colors">Compare</button>
+                <button onclick="navigate('quiz')" id="nav-quiz" class="bg-brand-900 text-white px-5 py-2 rounded-full hover:bg-slate-800 transition-all shadow-sm hover:shadow-md">Find Match</button>
+            </div>
         </div>
     </nav>
 
-    <main>
+    <main class="max-w-7xl mx-auto px-6 py-16">
+        
         <section id="home" class="active">
-            <div class="hero">
-                <h1>Navigate the AI Landscape.</h1>
-                <p>Cut through the noise. Compare top-tier Large Language Models side-by-side, or take our quick assessment to find the perfect AI tailored to your specific workflow.</p>
-                <button class="btn" onclick="navigate('quiz')">Find My Model</button>
+            <div class="max-w-3xl mx-auto text-center mt-12 mb-24">
+                <div class="inline-block bg-brand-50 border border-brand-100 text-brand-500 px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide uppercase mb-6">
+                    Data-Driven AI Selection
+                </div>
+                <h1 class="text-5xl md:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight mb-8">
+                    Stop guessing. <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-900 to-brand-500">Find your perfect AI stack.</span>
+                </h1>
+                <p class="text-lg text-slate-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    Cut through the marketing noise. Compare top-tier Large Language Models side-by-side or take our advanced assessment to align AI capabilities with your specific workflow.
+                </p>
+                <button onclick="navigate('quiz')" class="bg-brand-900 text-white px-8 py-4 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                    Start the Assessment
+                </button>
             </div>
         </section>
 
         <section id="compare">
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <h2>The Heavyweights</h2>
-                <p style="color: var(--text-secondary);">A strictly objective breakdown of current top models.</p>
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold tracking-tight mb-4">The Heavyweights</h2>
+                <p class="text-slate-500">An objective breakdown of the current frontier models.</p>
             </div>
-            <div class="grid" id="models-grid">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="models-grid">
                 </div>
         </section>
 
         <section id="quiz">
-            <div class="quiz-container">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h2>Assessment</h2>
-                    <p style="color: var(--text-secondary);">Answer 3 quick questions to get your personalized recommendation.</p>
+            <div class="max-w-2xl mx-auto bg-white border border-slate-200 rounded-3xl p-8 md:p-12 shadow-soft">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl font-bold tracking-tight mb-2">Workflow Analysis</h2>
+                    <p class="text-slate-500 text-sm">Select the options that best describe your requirements.</p>
                 </div>
-                <form id="llm-form">
-                    <div class="question">
-                        <h4>1. What is your primary use case?</h4>
-                        <div class="options">
-                            <label><input type="radio" name="usecase" value="coding" required> Software Development & Coding</label>
-                            <label><input type="radio" name="usecase" value="writing"> Creative Writing & Copywriting</label>
-                            <label><input type="radio" name="usecase" value="data"> Analyzing massive documents/data</label>
-                            <label><input type="radio" name="usecase" value="general"> A bit of everything (General Assistant)</label>
+                
+                <form id="llm-form" class="space-y-10">
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-800">1. What is your absolute primary use case?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="usecase" value="code" required class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
+                                    Software Dev & Complex Coding
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="usecase" value="write" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
+                                    Copywriting & Content Creation
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="usecase" value="data" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
+                                    Analyzing massive datasets/PDFs
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="usecase" value="research" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 peer-checked:ring-1 peer-checked:ring-brand-500 transition-all group-hover:border-slate-300 text-sm font-medium text-slate-700">
+                                    Market Research & Web Scraping
+                                </div>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="question">
-                        <h4>2. What is your budget preference?</h4>
-                        <div class="options">
-                            <label><input type="radio" name="budget" value="free" required> Must be free or highly cost-efficient</label>
-                            <label><input type="radio" name="budget" value="paid"> Willing to pay (~$20/mo) for the best</label>
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-800">2. How do you integrate AI into your workspace?</h4>
+                        <div class="grid grid-cols-1 gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="integration" value="google" required class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700 flex justify-between items-center">
+                                    <span>Deeply tied to Google Docs, Sheets, & Drive</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="integration" value="standalone" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700 flex justify-between items-center">
+                                    <span>I use it as a standalone web app/chat interface</span>
+                                </div>
+                            </label>
                         </div>
                     </div>
 
-                    <div class="question">
-                        <h4>3. How important is coding capability vs natural language tone?</h4>
-                        <div class="options">
-                            <label><input type="radio" name="style" value="logic" required> I need pure logic and code structure</label>
-                            <label><input type="radio" name="style" value="human"> I need a natural, human-sounding tone</label>
-                            <label><input type="radio" name="style" value="balanced"> I need a balance of both</label>
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-800">3. What kind of inputs are you working with?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="input" value="text" required class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
+                                    Just Text
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="input" value="multimodal" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
+                                    Text + Images
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="input" value="heavy" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl text-center peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
+                                    Audio + Video Files
+                                </div>
+                            </label>
                         </div>
                     </div>
 
-                    <button type="button" class="btn" style="width: 100%;" onclick="calculateResult()">Reveal My Match</button>
+                    <div class="space-y-4">
+                        <h4 class="font-semibold text-slate-800">4. Budget constraints?</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="budget" value="free" required class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
+                                    Strictly Free/Open Source
+                                </div>
+                            </label>
+                            <label class="cursor-pointer group">
+                                <input type="radio" name="budget" value="paid" class="peer">
+                                <div class="p-4 border border-slate-200 rounded-xl peer-checked:border-brand-500 peer-checked:bg-brand-50 transition-all text-sm font-medium text-slate-700">
+                                    Willing to pay $20/mo
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="calculateComplexResult()" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold shadow-md hover:bg-slate-800 transition-colors">
+                        Run Analysis Engine
+                    </button>
                 </form>
 
-                <div id="result-display">
-                    <h3 style="color: #9ca3af; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;">Your Ideal Model</h3>
-                    <h2 id="winner-name">Model Name</h2>
-                    <p id="winner-desc">Description goes here based on their answers.</p>
+                <div id="result-display" class="hidden mt-12 pt-10 border-t border-slate-200 text-center">
+                    <div class="text-xs font-bold tracking-widest text-brand-500 uppercase mb-4">Algorithm Top Match</div>
+                    <div id="winner-logo-container" class="w-16 h-16 mx-auto mb-4 bg-slate-50 rounded-2xl flex items-center justify-center shadow-sm border border-slate-100"></div>
+                    <h2 id="winner-name" class="text-3xl font-extrabold text-slate-900 mb-4">Model Name</h2>
+                    <p id="winner-desc" class="text-slate-600 leading-relaxed max-w-md mx-auto bg-slate-50 p-6 rounded-2xl border border-slate-100"></p>
                 </div>
             </div>
         </section>
     </main>
 
     <script>
-        // Data for the Comparison Grid
+        // Data Structure with inline SVGs for premium aesthetic
         const llmData = [
             {
+                id: "chatgpt",
                 name: "ChatGPT (GPT-4o)",
-                pros: ["Exceptional all-rounder", "Fastest response times", "Best native voice & vision capabilities"],
-                cons: ["Writing can sometimes feel 'AI-generic'", "Strict censorship guardrails"]
+                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-slate-800"><path d="M22.2819 9.8211a5.9847 5.9847 0 0 0-.5157-4.9108 6.0462 6.0462 0 0 0-6.5098-2.9A6.0651 6.0651 0 0 0 4.9807 4.1818a5.9847 5.9847 0 0 0-3.9977 2.9 6.0462 6.0462 0 0 0 .7427 7.0966 5.98 5.98 0 0 0 .511 4.9107 6.051 6.051 0 0 0 6.5146 2.9001A5.9847 5.9847 0 0 0 13.2599 24a6.0557 6.0557 0 0 0 5.7718-4.2057 5.9847 5.9847 0 0 0 3.989-2.9 6.051 6.051 0 0 0-.7388-7.0732ZM13.2599 22.1906c-1.8546 0-3.5358-.9623-4.4754-2.5484l.1132-.0661 5.0934-2.9377a1.442 1.442 0 0 0 .7278-1.258V8.1528l1.7925 1.035v6.5298c0 3.585-2.915 6.473-6.2515 6.473Zm-8.4908-3.8116a4.269 4.269 0 0 1-2.2377-3.8164c0-1.8593.9622-3.5359 2.5437-4.4707l.1132.0661 5.0934 2.9424c.4528.2642.7278.75.7278 1.258v7.2276l-1.7925-1.035v-6.53a6.4764 6.4764 0 0 0-3.1235-5.6322l-.1132-.066v10.057ZM2.417 7.3917a4.2737 4.2737 0 0 1 2.2377-3.8211 4.2595 4.2595 0 0 1 4.4754 0l-.066.1133L4.4754 6.5516a1.4468 1.4468 0 0 0-.7278 1.258v7.2276L1.955 14.002v-6.6103Zm15.823-1.035-5.0934-2.9377a1.4468 1.4468 0 0 0-1.4556 0L4.464 6.3614l1.7925-1.035 6.5205 3.765a6.481 6.481 0 0 1 3.1235 5.6322v5.6795l1.7924-1.035v-6.6103c0-1.8547-.9622-3.5359-2.5438-4.4755Zm3.3396 6.6103a4.269 4.269 0 0 1-2.2377 3.8164 4.2595 4.2595 0 0 1-4.4754 0l.066-.1133 4.5886-2.8677c.4528-.2642.7278-.75.7278-1.258V5.3168l1.7924 1.035v6.6103Zm-8.4907 3.8211-1.7925-1.035v-6.6103c0-1.8593.9623-3.5406 2.5438-4.4755a4.2642 4.2642 0 0 1 4.4754 0l-.1132.0661-5.0934 2.9377a1.4468 1.4468 0 0 0-.7278 1.258v7.2276Z"/></svg>`,
+                pros: ["Fastest response times", "Best voice & vision UI", "Strong all-rounder"],
+                cons: ["Writing can feel 'AI-generic'", "Guardrails can be restrictive"]
             },
             {
+                id: "claude",
                 name: "Claude 3.5 Sonnet",
-                pros: ["Unmatched at coding tasks", "Most natural, human-like writing tone", "Artifacts UI is game-changing for web dev"],
-                cons: ["Stricter message limits on paid tier", "No native real-time web search"]
+                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-orange-600"><path d="M12.064 1.22c-5.918 0-10.74 4.823-10.74 10.74 0 5.918 4.822 10.74 10.74 10.74 5.917 0 10.74-4.822 10.74-10.74 0-5.917-4.823-10.74-10.74-10.74zm0 18.52c-4.29 0-7.78-3.49-7.78-7.78s3.49-7.78 7.78-7.78 7.78 3.49 7.78 7.78-3.49 7.78-7.78 7.78zm-2.02-12.03c-.66 0-1.2.54-1.2 1.2s.54 1.2 1.2 1.2 1.2-.54 1.2-1.2-.54-1.2-1.2-1.2zm4.04 0c-.66 0-1.2.54-1.2 1.2s.54 1.2 1.2 1.2 1.2-.54 1.2-1.2-.54-1.2-1.2-1.2zm-2.02 5.05c-1.87 0-3.46 1.15-4.14 2.78l1.32.48c.45-1.13 1.55-1.94 2.82-1.94s2.37.81 2.82 1.94l1.32-.48c-.68-1.63-2.27-2.78-4.14-2.78z"/></svg>`,
+                pros: ["Unmatched coding with Artifacts", "Most human-like writing tone", "Deep reasoning capability"],
+                cons: ["Stricter usage limits", "No native real-time web search"]
             },
             {
+                id: "gemini",
                 name: "Gemini 1.5 Pro",
-                pros: ["Massive 1M-2M token context window", "Deep integration with Google Docs/Drive", "Excellent video and audio analysis"],
-                cons: ["Can be overly cautious with benign prompts", "Reasoning can occasionally be inconsistent"]
+                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-blue-500"><path d="M11.996 22l-1.226-4.634a8.497 8.497 0 0 0-5.497-5.497L.64 10.643l4.633-1.226a8.495 8.495 0 0 0 5.497-5.497L11.996 2l1.226 4.634a8.495 8.495 0 0 0 5.497 5.497l4.64 1.226-4.634 1.226a8.496 8.496 0 0 0-5.497 5.497L11.996 22z"/></svg>`,
+                pros: ["Massive 2M token context window", "Native Google Workspace integration", "Handles heavy audio/video inputs"],
+                cons: ["Can over-refuse benign prompts", "Interface can feel cluttered"]
             },
             {
-                name: "DeepSeek (V2/Coder)",
-                pros: ["Incredible reasoning for the cost", "Open-weights available for local use", "Top-tier math and coding performance"],
-                cons: ["Smaller broader ecosystem", "Less nuanced conversational tone compared to Claude"]
+                id: "genspark",
+                name: "Genspark / Perplexity",
+                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-teal-600"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>`,
+                pros: ["Best for Market Research", "Real-time web scraping", "Synthesizes multiple sources"],
+                cons: ["Not designed for heavy coding", "Weaker creative writing"]
             },
             {
-                name: "Qwen 2.5",
-                pros: ["Exceptional multilingual capabilities", "Very strong open-source variants", "Highly competitive benchmark performance"],
-                cons: ["Less brand recognition in the West", "Community support is still growing"]
+                id: "deepseek",
+                name: "DeepSeek Coder V2",
+                logo: `<svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor" class="text-indigo-600"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>`,
+                pros: ["Top-tier coding for free", "Open-weights available", "Incredible logical reasoning"],
+                cons: ["Less nuanced conversational tone", "Requires technical setup for local"]
             }
         ];
 
-        // Populate Comparison Grid
+        // Populate Grid
         const grid = document.getElementById('models-grid');
         llmData.forEach(model => {
-            const card = document.createElement('div');
-            card.className = 'card';
+            const pros = model.pros.map(p => `<li class="relative pl-5 text-sm text-slate-600 before:content-['✓'] before:absolute before:left-0 before:text-emerald-500 font-medium mb-1">${p}</li>`).join('');
+            const cons = model.cons.map(c => `<li class="relative pl-5 text-sm text-slate-600 before:content-['✕'] before:absolute before:left-0 before:text-red-400 font-medium mb-1">${c}</li>`).join('');
             
-            let prosHtml = model.pros.map(pro => `<li class="pro">${pro}</li>`).join('');
-            let consHtml = model.cons.map(con => `<li class="con">${con}</li>`).join('');
-
-            card.innerHTML = `
-                <h3>${model.name}</h3>
-                <div style="margin-bottom: 1.5rem;">
-                    <strong style="font-size: 0.9rem; color: var(--text-primary);">Pros</strong>
-                    <ul class="pro-con-list">${prosHtml}</ul>
-                </div>
-                <div>
-                    <strong style="font-size: 0.9rem; color: var(--text-primary);">Cons</strong>
-                    <ul class="pro-con-list">${consHtml}</ul>
+            grid.innerHTML += `
+                <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-soft hover:shadow-hover-soft hover:-translate-y-1 transition-all duration-300">
+                    <div class="flex items-center gap-4 mb-6 pb-4 border-b border-slate-100">
+                        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100">${model.logo}</div>
+                        <h3 class="text-xl font-bold text-slate-800">${model.name}</h3>
+                    </div>
+                    <div class="mb-5">
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Strengths</div>
+                        <ul class="space-y-1">${pros}</ul>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Weaknesses</div>
+                        <ul class="space-y-1">${cons}</ul>
+                    </div>
                 </div>
             `;
-            grid.appendChild(card);
         });
 
-        // Navigation Logic (SPA Behavior)
+        // Navigation
         function navigate(sectionId) {
-            // Hide all sections
             document.querySelectorAll('main section').forEach(sec => sec.classList.remove('active'));
-            // Remove active state from nav buttons
-            document.querySelectorAll('.nav-links button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('text-brand-900', 'font-bold'));
             
-            // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            document.getElementById(`nav-${sectionId}`).classList.add('active');
-            
-            // Reset quiz if navigating away
             if(sectionId !== 'quiz') {
-                document.getElementById('result-display').style.display = 'none';
-                document.getElementById('llm-form').reset();
+                document.getElementById(`nav-${sectionId}`).classList.add('text-brand-900', 'font-bold');
             }
         }
 
-        // Quiz Logic Engine
-        function calculateResult() {
+        // Advanced Scoring Algorithm
+        function calculateComplexResult() {
             const form = document.getElementById('llm-form');
-            const usecase = form.elements['usecase'].value;
-            const budget = form.elements['budget'].value;
-            const style = form.elements['style'].value;
-
-            if (!usecase || !budget || !style) {
-                alert("Please answer all 3 questions to get an accurate match.");
+            const data = new FormData(form);
+            
+            // Check completion
+            if([...data.keys()].length < 4) {
+                alert("Please complete all 4 questions to run the analysis engine.");
                 return;
             }
 
-            let winner = "";
-            let desc = "";
+            // Initialize Scoreboard
+            let scores = { chatgpt: 0, claude: 0, gemini: 0, genspark: 0, deepseek: 0 };
 
-            // Decision Tree Logic
-            if (usecase === 'data') {
-                winner = "Gemini 1.5 Pro";
-                desc = "Because you need to analyze massive amounts of data or documents, Gemini's massive 1M-2M token context window is unmatched in the industry.";
-            } 
-            else if (usecase === 'coding') {
-                if (budget === 'free') {
-                    winner = "DeepSeek Coder / Qwen";
-                    desc = "You want top-tier coding ability without the monthly fee. DeepSeek and Qwen offer incredible logic and coding capabilities completely free or open-source.";
-                } else {
-                    winner = "Claude 3.5 Sonnet";
-                    desc = "Claude 3.5 Sonnet is widely considered the undisputed king of coding right now. Paired with its 'Artifacts' UI, it will supercharge your development workflow.";
-                }
+            // Apply Weights based on answers
+            const usecase = data.get('usecase');
+            if (usecase === 'code') { scores.claude += 3; scores.deepseek += 3; }
+            if (usecase === 'write') { scores.claude += 3; scores.chatgpt += 2; }
+            if (usecase === 'data') { scores.gemini += 4; }
+            if (usecase === 'research') { scores.genspark += 4; scores.chatgpt += 1; }
+
+            const integration = data.get('integration');
+            if (integration === 'google') { scores.gemini += 3; }
+
+            const input = data.get('input');
+            if (input === 'heavy') { scores.gemini += 3; scores.chatgpt += 2; }
+            if (input === 'multimodal') { scores.chatgpt += 2; scores.claude += 1; }
+
+            const budget = data.get('budget');
+            if (budget === 'free') { 
+                scores.deepseek += 5; // massive weight for free coding
+                scores.claude -= 2;   // penalize strict rate limits on free
             }
-            else if (usecase === 'writing' || style === 'human') {
-                if (budget === 'paid') {
-                    winner = "Claude 3.5 Sonnet";
-                    desc = "Claude is famous for having the most natural, least 'robotic' writing tone among all LLMs. It feels highly human and nuanced.";
-                } else {
-                    winner = "ChatGPT (Free Tier)";
-                    desc = "The free tier of ChatGPT offers a highly capable writer. While occasionally generic, proper prompting will yield excellent creative results.";
-                }
-            }
-            else {
-                // General fallback
-                winner = "ChatGPT (GPT-4o)";
-                desc = "You need a powerful all-rounder. GPT-4o is fast, highly capable across reasoning, writing, and coding, and features the best voice and vision tools.";
-            }
+
+            // Determine Winner
+            let winnerId = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            let winner = llmData.find(m => m.id === winnerId);
+
+            // Generate contextual description
+            let desc = "";
+            if(winnerId === 'claude') desc = "Based on your focus on pristine code generation or nuanced writing, Claude 3.5 Sonnet's reasoning engine and Artifacts UI are unparalleled right now.";
+            if(winnerId === 'gemini') desc = "Because you work deeply within the Google ecosystem or need to process massive datasets and media files, Gemini 1.5 Pro's 2M token window is your best asset.";
+            if(winnerId === 'chatgpt') desc = "You need a robust, multimodal all-rounder. GPT-4o provides the fastest speeds and the most versatile vision/audio capabilities on the market.";
+            if(winnerId === 'genspark') desc = "Since you prioritize market research and data synthesis, specialized research engines like Genspark or Perplexity will scrape the web and compile reports much faster than standard chat models.";
+            if(winnerId === 'deepseek') desc = "You need top-tier logical reasoning and coding power but are conscious of budget constraints. DeepSeek offers enterprise-grade performance completely free.";
 
             // Display Results
-            document.getElementById('winner-name').innerText = winner;
+            document.getElementById('winner-name').innerText = winner.name;
             document.getElementById('winner-desc').innerText = desc;
-            document.getElementById('result-display').style.display = 'block';
+            document.getElementById('winner-logo-container').innerHTML = winner.logo;
             
-            // Scroll to result smoothly
-            document.getElementById('result-display').scrollIntoView({ behavior: 'smooth' });
+            const resultDiv = document.getElementById('result-display');
+            resultDiv.classList.remove('hidden');
+            resultDiv.classList.add('block', 'animate-[slideUp_0.5s_ease-out_forwards]');
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     </script>
 </body>
